@@ -1,4 +1,6 @@
 # Rclone-Scheduler
+[![Build Status](https://drone.ggrainger.uk/api/badges/randomman552/Rclone-Scheduler/status.svg)](https://drone.ggrainger.uk/randomman552/Rclone-Scheduler)
+
 Docker image to schedule a regular rclone backup using the rclone API
 
 ## Configuration
