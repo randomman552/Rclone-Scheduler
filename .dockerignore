@@ -1,3 +1,5 @@
 venv
 .vscode
 __pycache__
+README.md
+.gitignore
