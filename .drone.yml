@@ -4,19 +4,20 @@ name: Push Image
 
 trigger:
   branch:
-    - main
+    - master
   event:
     exclude:
       - pull_request
+      - promote
 
 steps:
   - name: Build and Push Image
     image: plugins/docker
     settings:
       username:
-        from_secret: docker-user
+          from_secret: docker-user
       password:
-        from_secret: docker-key
+          from_secret: docker-key
       repo: randomman552/rclone-scheduler
       tags:
-        - latest
+          - latest
