@@ -1,3 +1,4 @@
+#!/usr/bin/env python 
 from requests import ConnectionError
 from util import backup, get_parameter
 
