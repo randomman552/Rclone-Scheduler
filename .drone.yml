@@ -1,0 +1,22 @@
+kind: pipeline
+type: docker
+name: Push Image
+
+trigger:
+  branch:
+    - main
+  event:
+    exclude:
+      - pull_request
+
+steps:
+  - name: Build and Push Image
+    image: plugins/docker
+    settings:
+      username:
+        from_secret: docker-user
+      password:
+        from_secret: docker-key
+      repo: randomman552/rclone-scheduler
+      tags:
+        - latest
