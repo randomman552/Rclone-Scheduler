@@ -17,12 +17,13 @@ Configuration is done through environment variables
 Configuration for backup operation.\
 Bear in mind all paths are used by the Rclone daemon and not this script
 
-| Variable        | Description                                        | Default     |
-|----------------:|:--------------------------------------------------:|:------------|
-| BACKUP_SCHEDULE | The cron schedule to run the backup on             | `0 0 * * 0` |
-| BACKUP_SOURCE   | Source to get the data from                        | `/data`     |
-| BACKUP_REMOTE   | The remote to use as a destination when backing up | `remote`    |
-| BACKUP_DEST     | The destination of the backup on the remote        | `/backup`   |
+| Variable           | Description                                        | Default     |
+|-------------------:|:--------------------------------------------------:|:------------|
+| BACKUP_SCHEDULE    | The cron schedule to run the backup on             | `0 0 * * 0` |
+| BACKUP_SOURCE      | Source to get the data from                        | `/data`     |
+| BACKUP_REMOTE      | The remote to use as a destination when backing up | `remote`    |
+| BACKUP_DEST        | The destination of the backup on the remote        | `/backup`   |
+| BACKUP_FILTER_FROM | The path to the file to use as a backup filter     |             |
 
 ### Restoring a backup
 ***TODO***\
