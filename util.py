@@ -50,10 +50,7 @@ def backup(src: str, dest: str) -> requests.Response:
     body = {
         "_async": True,
         "srcFs": src,
-        "dstFs": dest,
-        "opt": {
-            "retries": 1
-        }
+        "dstFs": dest
     }
 
     body = apply_filter(body)
