@@ -26,20 +26,6 @@ def get_rclone_url() -> str:
 
     return f"{protocol}://{host}:{port}"
 
-def apply_filter(body: dict) -> dict:
-    """
-    Apply global filter settings to the given request
-    :param dict request: The request dict to edit
-    """
-    filter_from = get_parameter("BACKUP_FILTER_FROM", "")
-
-    if len(filter_from) > 0:
-        body["_filter"] = {
-            "FilterFrom": [ filter_from ]
-        }
-
-    return body
-
 def backup(src: str, dest: str) -> requests.Response:
     """
     Run an Rclone backup from the given src to the given destination
@@ -52,7 +38,5 @@ def backup(src: str, dest: str) -> requests.Response:
         "srcFs": src,
         "dstFs": dest
     }
-
-    body = apply_filter(body)
 
     return requests.post(url, json = body)

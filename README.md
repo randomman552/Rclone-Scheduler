@@ -6,6 +6,8 @@ Docker image to schedule a regular rclone backup using the rclone API
 ## Configuration
 Configuration is done through environment variables
 
+Please note that rclone can be configured entirely through [environment variables](https://rclone.org/docs/#environment-variables), so this image DOES NOT configure any filters or other parameters when calling the Rclone API.
+
 ### Rclone connection variables
 | Variable        | Description                                  | Default     |
 |----------------:|:--------------------------------------------:|:------------|
@@ -23,7 +25,6 @@ Bear in mind all paths are used by the Rclone daemon and not this script
 | BACKUP_SOURCE      | Source to get the data from                        | `/data`     |
 | BACKUP_REMOTE      | The remote to use as a destination when backing up | `remote`    |
 | BACKUP_DEST        | The destination of the backup on the remote        | `/backup`   |
-| BACKUP_FILTER_FROM | The path to the file to use as a backup filter     |             |
 
 ### Restoring a backup
 ***TODO***\
