@@ -7,6 +7,10 @@ def main():
     dest_remote = get_parameter("BACKUP_REMOTE", "remote")
     dest_path = get_parameter("BACKUP_DEST", "/backup")
 
+    # Strip leading "/" causing malformed destination string
+    # Interestingly this caused backups to not check for duplicates properly
+    dest_path = dest_path.strip("/")
+
     dest = f"{dest_remote}/{dest_path}"
 
     operation = get_parameter("OPERATION", "backup")
