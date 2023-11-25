@@ -11,7 +11,8 @@ trigger:
       - promote
 
 steps:
-  - name: Build and Push Image
+  # Docker image
+  - name: docker-image
     image: plugins/docker
     environment:
       DOCKER_BUILDKIT: 1
@@ -23,3 +24,12 @@ steps:
       repo: randomman552/rclone-scheduler
       tags:
           - latest
+
+  # Reporting
+  - name: build-reporter
+    image: randomman552/drone-build-reporter
+    settings:
+      gotify_token:
+        from_secret: gotify-token
+      gotify_url:
+        from_secret: gotify-url
