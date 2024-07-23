@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 
@@ -19,35 +18,53 @@ func main() {
 
 	app.Flags = []cli.Flag{
 		&cli.StringFlag{
-			Name:     "rclone.host",
-			Required: true,
+			Name: "rclone.host",
 			EnvVars: []string{
 				"RCLONE_HOST",
 			},
 			Value: "localhost",
 		},
 		&cli.StringFlag{
-			Name:     "rclone.port",
-			Required: true,
+			Name: "rclone.port",
 			EnvVars: []string{
 				"RCLONE_PORT",
 			},
 			Value: "5572",
 		},
 		&cli.StringFlag{
-			Name:     "rclone.protocol",
-			Required: true,
+			Name: "rclone.protocol",
 			EnvVars: []string{
 				"RCLONE_PROTOCOL",
 			},
 			Value: "https",
 		},
 		&cli.StringFlag{
-			Name: "schedule",
+			Name: "backup.schedule",
 			EnvVars: []string{
 				"BACKUP_SCHEDULE",
 			},
 			Value: "0 0 * * 1",
+		},
+		&cli.StringFlag{
+			Name: "backup.source",
+			EnvVars: []string{
+				"BACKUP_SOURCE",
+			},
+			Value: "/data",
+		},
+		&cli.StringFlag{
+			Name: "backup.remote",
+			EnvVars: []string{
+				"BACKUP_REMOTE",
+			},
+			Value: "remomte",
+		},
+		&cli.StringFlag{
+			Name: "backup.destination",
+			EnvVars: []string{
+				"BACKUP_DEST",
+			},
+			Value: "/backup",
 		},
 	}
 
@@ -57,22 +74,16 @@ func main() {
 }
 
 func run(c *cli.Context) error {
-	// Get parameters
-	protocol := c.String("rclone.protocol")
-	host := c.String("rclone.host")
-	port := c.String("rclone.port")
-	backupSchedule := c.String("schedule")
-
-	_ = fmt.Sprintf("%s://%s:%s", protocol, host, port)
-	log.Default().Printf("Backing up with schedule '%s'", backupSchedule)
+	backupSchedule := getBackupSchedule(c)
 
 	// Create scheduler
-	s, err := createScheduler(backupSchedule)
+	s, err := createScheduler(c)
 	if err != nil {
 		return err
 	}
 
 	// Start scheduler
+	log.Printf("Backing up with schedule '%s'", backupSchedule)
 	s.Start()
 
 	// Sleep until terminated
