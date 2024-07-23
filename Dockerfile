@@ -1,20 +1,10 @@
-FROM python:3.11-alpine
+FROM golang:1.21.5-alpine3.19 as build
+WORKDIR /build
+COPY . .
+RUN go build -o entrypoint .
 
-ENV \
-    RCLONE_HOST=localhost \
-    RCLONE_PORT=5572 \
-    RCLONE_PROTOCOL=https \
-    BACKUP_SCHEDULE="0 0 * * 0" \
-    BACKUP_SOURCE=/data \
-    BACKUP_REMOTE=remote \
-    BACKUP_DEST=/backup
+FROM alpine:3.19 as final
 
-RUN adduser -D rclone
+COPY --from=build /build/entrypoint /
 
-COPY --chmod=755 entrypoint.sh /
-
-WORKDIR /home/rclone
-COPY --chown=rclone:rclone --chmod=0755 . .
-RUN pip install -r requirements.txt
-
-ENTRYPOINT [ "/entrypoint.sh" ]
+ENTRYPOINT [ "/entrypoint" ]
