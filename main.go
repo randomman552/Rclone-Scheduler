@@ -43,7 +43,7 @@ func main() {
 			EnvVars: []string{
 				"BACKUP_SCHEDULE",
 			},
-			Value: "0 0 * * 1",
+			Value: "0 0 * * 0",
 		},
 		&cli.StringFlag{
 			Name: "backup.source",
