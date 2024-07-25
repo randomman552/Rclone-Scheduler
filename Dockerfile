@@ -5,6 +5,7 @@ RUN go build -o entrypoint .
 
 FROM alpine:3.19 as final
 
+COPY ./templates /templates
 COPY --from=build /build/entrypoint /
 
 ENTRYPOINT [ "/entrypoint" ]

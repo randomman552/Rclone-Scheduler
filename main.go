@@ -66,6 +66,18 @@ func main() {
 			},
 			Value: "/backup",
 		},
+		&cli.StringFlag{
+			Name: "gotify.url",
+			EnvVars: []string{
+				"GOTIFY_URL",
+			},
+		},
+		&cli.StringFlag{
+			Name: "gotify.token",
+			EnvVars: []string{
+				"GOTIFY_TOKEN",
+			},
+		},
 	}
 
 	if err := app.Run(os.Args); err != nil {
