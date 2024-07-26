@@ -62,6 +62,12 @@ func createScheduler(c *cli.Context) (gocron.Scheduler, error) {
 
 // The function used to start a backup job
 func StartBackupTask(c *cli.Context, storageEngine MemoryStorageEngine) {
+	storedJobId := storageEngine.GetValue("currentJobId")
+	if storedJobId != nil {
+		log.Printf("Backup job is already running. Skipping...")
+		return
+	}
+
 	// Start backup
 	client := getRCloneClient(c)
 	srcPath := getBackupSourcePath(c)
