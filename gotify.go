@@ -141,10 +141,19 @@ func (g GotifyNotifier) DoRequest(request *http.Request) {
 
 // Send a gotify notification that the backup has started
 func (g GotifyNotifier) NotifyBackupStarted(context BackupStartedContext) {
-	message := g.RenderTemplate("templates/backup-started/message.tmpl", context)
-	title := g.RenderTemplate("templates/backup-started/title.tmpl", context)
+	message := g.RenderTemplate("templates/started/message.tmpl", context)
+	title := g.RenderTemplate("templates/started/title.tmpl", context)
 
 	request := g.NewRequest(title.String(), 5, message)
 	g.DoRequest(request)
 	log.Printf("Sent gotify backup started notification")
+}
+
+func (g GotifyNotifier) NotifyBackupFinished(context BackupFinishedContext) {
+	message := g.RenderTemplate("templates/finished/message.tmpl", context)
+	title := g.RenderTemplate("templates/finished/title.tmpl", context)
+
+	request := g.NewRequest(title.String(), 5, message)
+	g.DoRequest(request)
+	log.Printf("Sent gotify backup finished notification")
 }
