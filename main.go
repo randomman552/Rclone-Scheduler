@@ -86,8 +86,6 @@ func main() {
 }
 
 func run(c *cli.Context) error {
-	backupSchedule := getBackupSchedule(c)
-
 	// Create scheduler
 	s, err := createScheduler(c)
 	if err != nil {
@@ -95,7 +93,6 @@ func run(c *cli.Context) error {
 	}
 
 	// Start scheduler
-	log.Printf("Backing up with schedule '%s'", backupSchedule)
 	s.Start()
 
 	// Sleep until terminated

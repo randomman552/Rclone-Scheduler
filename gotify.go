@@ -39,7 +39,7 @@ type MessageRequest struct {
 }
 
 // Create a new GotifyNotifer from the current cli context
-func NewGotifyNotifier(c *cli.Context) GotifyNotifier {
+func NewGotifyNotifier(c *cli.Context) Notifer {
 	url := c.String("gotify.url")
 	token := c.String("gotify.token")
 
@@ -139,8 +139,12 @@ func (g GotifyNotifier) DoRequest(request *http.Request) {
 	response.Body.Close()
 }
 
+func (g GotifyNotifier) NotifyReady(context NotifyReadyContext) {
+
+}
+
 // Send a gotify notification that the backup has started
-func (g GotifyNotifier) NotifyBackupStarted(context BackupStartedContext) {
+func (g GotifyNotifier) NotifyBackupStarted(context NotifyBackupStartedContext) {
 	message := g.RenderTemplate("templates/started/message.tmpl", context)
 	title := g.RenderTemplate("templates/started/title.tmpl", context)
 
@@ -149,7 +153,7 @@ func (g GotifyNotifier) NotifyBackupStarted(context BackupStartedContext) {
 	log.Printf("Sent gotify backup started notification")
 }
 
-func (g GotifyNotifier) NotifyBackupFinished(context BackupFinishedContext) {
+func (g GotifyNotifier) NotifyBackupFinished(context NotifyBackupFinishedContext) {
 	message := g.RenderTemplate("templates/finished/message.tmpl", context)
 	title := g.RenderTemplate("templates/finished/title.tmpl", context)
 

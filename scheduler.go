@@ -9,18 +9,6 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-// Notification context for backup started notifications
-type BackupStartedContext struct {
-	StartedAt string
-	JobId     int
-}
-
-// Notification constant for backup finished notifications
-type BackupFinishedContext struct {
-	Duration string
-	JobId    int
-}
-
 func createScheduler(c *cli.Context) (gocron.Scheduler, error) {
 	s, err := gocron.NewScheduler()
 	if err != nil {
@@ -32,7 +20,7 @@ func createScheduler(c *cli.Context) (gocron.Scheduler, error) {
 
 	// Create task to start a backup
 	backupSchedule := getBackupSchedule(c)
-	_, err = s.NewJob(
+	backupJob, err := s.NewJob(
 		gocron.CronJob(backupSchedule, false),
 		gocron.NewTask(
 			StartBackupTask,
@@ -42,6 +30,10 @@ func createScheduler(c *cli.Context) (gocron.Scheduler, error) {
 
 	if err != nil {
 		log.Printf("Failed to create backup schedule: %s", err)
+	}
+
+	if err != nil {
+		log.Printf("Failed to get next backup time: %s", err)
 	}
 
 	// Job to check sync status (every 5 seconds)
@@ -57,7 +49,33 @@ func createScheduler(c *cli.Context) (gocron.Scheduler, error) {
 		log.Printf("Failed to create check schedule: %s", err)
 	}
 
+	// Job to run once at startup
+	_, err = s.NewJob(
+		gocron.OneTimeJob(gocron.OneTimeJobStartImmediately()),
+		gocron.NewTask(
+			AppliationReadyTask,
+			c,
+			backupJob,
+		),
+	)
+
+	if err != nil {
+		log.Printf("Failed to create startup job: %s", err)
+	}
+
 	return s, nil
+}
+
+func AppliationReadyTask(c *cli.Context, backupJob gocron.Job) {
+	backupSchedule := getBackupSchedule(c)
+	nextRun, _ := backupJob.NextRun()
+	nextRunStr := nextRun.Format(time.RFC822)
+	oneSecond := time.Duration(1 * 1000 * 1000 * 1000)
+	timeBeforeNextJob := time.Until(nextRun)
+	timeBeforeNextJobStr := timeBeforeNextJob.Round(oneSecond).String()
+
+	log.Printf("Backing up with schedule '%s'", backupSchedule)
+	log.Printf("First run in '%s' at '%s'", timeBeforeNextJobStr, nextRunStr)
 }
 
 // The function used to start a backup job
@@ -79,7 +97,7 @@ func StartBackupTask(c *cli.Context, storageEngine MemoryStorageEngine) {
 		storageEngine.SetValue("currentJobId", res.JobId)
 
 		// Notification context
-		context := BackupStartedContext{
+		context := NotifyBackupStartedContext{
 			StartedAt: time.Now().Format(time.RFC822),
 			JobId:     res.JobId,
 		}
@@ -109,7 +127,7 @@ func CheckBackupStatusTask(c *cli.Context, storageEngine MemoryStorageEngine) {
 			storageEngine.SetValue("currentJobId", nil)
 
 			// Notification context
-			context := BackupFinishedContext{
+			context := NotifyBackupFinishedContext{
 				Duration: strconv.FormatFloat(jobStatus.Duration, 'f', 0, 64),
 				JobId:    jobId,
 			}
