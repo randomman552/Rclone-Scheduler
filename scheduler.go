@@ -76,6 +76,18 @@ func AppliationReadyTask(c *cli.Context, backupJob gocron.Job) {
 
 	log.Printf("Backing up with schedule '%s'", backupSchedule)
 	log.Printf("First run in '%s' at '%s'", timeBeforeNextJobStr, nextRunStr)
+
+	// Send gotify notification
+	gotify := NewGotifyNotifier(c)
+	if gotify.IsEnabled() {
+		notifyContext := NotifyReadyContext{
+			Schedule:         backupSchedule,
+			NextBackupTime:   nextRunStr,
+			DurationToBackup: timeBeforeNextJobStr,
+		}
+
+		gotify.NotifyReady(notifyContext)
+	}
 }
 
 // The function used to start a backup job

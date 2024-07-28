@@ -1,7 +1,5 @@
 package main
 
-import "time"
-
 // Notifier interface
 type Notifer interface {
 	IsEnabled() bool
@@ -13,8 +11,8 @@ type Notifer interface {
 // Notification context for application ready
 type NotifyReadyContext struct {
 	Schedule         string
-	NextBackupTime   time.Time
-	DurationToBackup time.Duration
+	NextBackupTime   string
+	DurationToBackup string
 }
 
 // Notification context for backup started notifications

@@ -140,7 +140,12 @@ func (g GotifyNotifier) DoRequest(request *http.Request) {
 }
 
 func (g GotifyNotifier) NotifyReady(context NotifyReadyContext) {
+	message := g.RenderTemplate("templates/ready/message.tmpl", context)
+	title := g.RenderTemplate("templates/ready/title.tmpl", context)
 
+	request := g.NewRequest(title.String(), 5, message)
+	g.DoRequest(request)
+	log.Printf("Sent gotify app ready notification")
 }
 
 // Send a gotify notification that the backup has started
