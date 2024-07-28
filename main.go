@@ -1,9 +1,13 @@
 package main
 
 import (
+	"context"
+	"errors"
 	"log"
+	"net/http"
 	"os"
 
+	"github.com/hellofresh/health-go/v5"
 	"github.com/joho/godotenv"
 	"github.com/urfave/cli/v2"
 )
@@ -93,7 +97,28 @@ func run(c *cli.Context) error {
 	}
 
 	// Start scheduler
-	s.Start()
+	go s.Start()
+
+	// Create healthchecker
+	h, _ := health.New(health.WithComponent(health.Component{
+		Name:    "RClone Scheduler",
+		Version: "v1.0",
+	}),
+		health.WithChecks(health.Config{
+			Name: "RClone HTTP",
+			Check: func(ctx context.Context) error {
+				rclone := getRCloneClient(c)
+				versionInfo := rclone.Version()
+
+				if versionInfo == nil {
+					return errors.New("RClone did not return successfully")
+				}
+				return nil
+			},
+		}))
+
+	http.Handle("/health", h.Handler())
+	http.ListenAndServe(":3000", nil)
 
 	// Sleep until terminated
 	select {}

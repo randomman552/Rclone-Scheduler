@@ -68,6 +68,15 @@ type RCloneCoreStatsResponse struct {
 	TransferTime        float64 `json:"transferTime"`
 }
 
+// Struct representing an RClone core version request
+type RCloneCoreVersionRequest struct {
+}
+
+// Struct representing an RClone core version response
+type RCloneCoreVersionResponse struct {
+	Version string
+}
+
 // Create a new RClone API client pointing at the given url
 func NewRCloneClient(url string) RCloneClient {
 	return RCloneClient{
@@ -76,7 +85,7 @@ func NewRCloneClient(url string) RCloneClient {
 }
 
 // Create a new request with the given parameters
-func (c *RCloneClient) NewRequest(method string, url string, body io.Reader) *http.Request {
+func (c RCloneClient) NewRequest(method string, url string, body io.Reader) *http.Request {
 	url = c.Url + url
 	request, err := http.NewRequest(method, url, body)
 
@@ -87,6 +96,16 @@ func (c *RCloneClient) NewRequest(method string, url string, body io.Reader) *ht
 	request.Header.Set("Content-Type", "application/json")
 
 	return request
+}
+
+// Get the current version
+func (c RCloneClient) Version() *RCloneCoreVersionResponse {
+	// Encode request
+	body := &bytes.Buffer{}
+	json.NewEncoder(body).Encode(nil)
+
+	request := c.NewRequest("POST", "/core/version", body)
+	return DoRequest[RCloneCoreVersionResponse](request)
 }
 
 // Start a sync operation from the given source to the given destination
