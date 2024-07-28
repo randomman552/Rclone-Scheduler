@@ -72,12 +72,10 @@ func AppliationReadyTask(c *cli.Context, backupJob gocron.Job) {
 	backupSchedule := getBackupSchedule(c)
 	nextRun, _ := backupJob.NextRun()
 	nextRunStr := nextRun.Format(time.RFC822)
-	oneSecond := time.Duration(1 * 1000 * 1000 * 1000)
-	timeBeforeNextJob := time.Until(nextRun)
-	timeBeforeNextJobStr := timeBeforeNextJob.Round(oneSecond).String()
+	timeBeforeNextJobStr := humanize.Time(nextRun)
 
 	log.Printf("Backing up with schedule '%s'", backupSchedule)
-	log.Printf("First run in '%s' at '%s'", timeBeforeNextJobStr, nextRunStr)
+	log.Printf("First backup will start %s (%s)", timeBeforeNextJobStr, nextRunStr)
 
 	// Send gotify notification
 	gotify := NewGotifyNotifier(c)
