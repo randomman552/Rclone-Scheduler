@@ -1,1 +1,5 @@
-Backup finished in {{ .Duration }}
+{{- if .Success -}}
+    🟩 Backup succeeded in {{ .Duration }}
+{{- else -}}
+    🟥 Backup failed in {{ .Duration }}
+{{- end -}}

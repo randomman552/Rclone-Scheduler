@@ -24,6 +24,7 @@ type NotifyBackupStartedContext struct {
 // Notification constant for backup finished notifications
 type NotifyBackupFinishedContext struct {
 	JobId     int
+	Success   bool
 	Duration  string
 	Bytes     string
 	Checks    uint

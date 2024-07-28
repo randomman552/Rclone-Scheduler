@@ -133,7 +133,11 @@ func CheckBackupStatusTask(c *cli.Context, storageEngine MemoryStorageEngine) {
 		// Check the job status with rclone
 		jobStatus := rclone.GetSyncStatus(jobId)
 		if jobStatus.Finished {
-			log.Printf("Finished backup job with id '%d'", jobId)
+			if jobStatus.Success {
+				log.Printf("Finished backup job with id '%d' successfully", jobId)
+			} else {
+				log.Printf("Finished backup job with id '%d' unsuccessfully", jobId)
+			}
 
 			// Clear from storage engine, as the job is now done
 			storageEngine.SetValue("currentJobId", nil)
@@ -147,6 +151,7 @@ func CheckBackupStatusTask(c *cli.Context, storageEngine MemoryStorageEngine) {
 
 				context := NotifyBackupFinishedContext{
 					JobId:     jobId,
+					Success:   jobStatus.Success,
 					Duration:  jobDuration.String(),
 					Bytes:     humanize.IBytes(uint64(jobStats.Bytes)),
 					Speed:     humanize.IBytes(uint64(math.Round(jobStats.Speed))) + "/S",
