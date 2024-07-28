@@ -54,18 +54,18 @@ type RCloneCoreStatsResponse struct {
 	Deletes             uint    `json:"deletes"`
 	Transfers           uint    `json:"transfers"`
 	Errors              uint    `json:"errors"`
-	ElapsedTime         float32 `json:"elapsedTime"`
-	Eta                 float32 `json:"eta"`
+	Renames             uint    `json:"renames"`
+	ElapsedTime         float64 `json:"elapsedTime"`
+	Eta                 float64 `json:"eta"`
 	FatalError          bool    `json:"fatalError"`
 	LastError           string  `json:"lastError"`
-	Renames             uint    `json:"renames"`
 	RetryError          bool    `json:"retryError"`
 	ServerSideCopies    uint    `json:"serverSideCopies"`
 	ServerSideCopyBytes uint    `json:"servierSideCopyBytes"`
 	ServerSideMoves     uint    `json:"serverSideMoves"`
 	ServerSideMoveBytes uint    `json:"serverSideMoveBytes"`
-	Speed               float32 `json:"speed"`
-	TransferTime        float32 `json:"transferTime"`
+	Speed               float64 `json:"speed"`
+	TransferTime        float64 `json:"transferTime"`
 }
 
 // Create a new RClone API client pointing at the given url

@@ -2,9 +2,10 @@ package main
 
 import (
 	"log"
-	"strconv"
+	"math"
 	"time"
 
+	"github.com/dustin/go-humanize"
 	"github.com/go-co-op/gocron/v2"
 	"github.com/urfave/cli/v2"
 )
@@ -66,6 +67,7 @@ func createScheduler(c *cli.Context) (gocron.Scheduler, error) {
 	return s, nil
 }
 
+// Task run on startup
 func AppliationReadyTask(c *cli.Context, backupJob gocron.Job) {
 	backupSchedule := getBackupSchedule(c)
 	nextRun, _ := backupJob.NextRun()
@@ -137,16 +139,26 @@ func CheckBackupStatusTask(c *cli.Context, storageEngine MemoryStorageEngine) {
 
 			// Clear from storage engine, as the job is now done
 			storageEngine.SetValue("currentJobId", nil)
-
-			// Notification context
-			context := NotifyBackupFinishedContext{
-				Duration: strconv.FormatFloat(jobStatus.Duration, 'f', 0, 64),
-				JobId:    jobId,
-			}
+			jobStats := rclone.GetSyncStats(jobId)
 
 			// Send notifications
 			gotify := NewGotifyNotifier(c)
 			if gotify.IsEnabled() {
+				roundDuration := time.Duration(time.Second)
+				jobDuration := time.Duration(jobStatus.Duration * float64(time.Second)).Round(roundDuration)
+
+				context := NotifyBackupFinishedContext{
+					JobId:     jobId,
+					Duration:  jobDuration.String(),
+					Bytes:     humanize.IBytes(uint64(jobStats.Bytes)),
+					Speed:     humanize.IBytes(uint64(math.Round(jobStats.Speed))) + "/S",
+					Checks:    jobStats.Checks,
+					Deletes:   jobStats.Deletes,
+					Transfers: jobStats.Transfers,
+					Errors:    jobStats.Errors,
+					Renames:   jobStats.Renames,
+				}
+
 				gotify.NotifyBackupFinished(context)
 			}
 		}
