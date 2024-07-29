@@ -1,19 +1,7 @@
-Job ID: `{{ .JobId }}`
+Backed up `{{ .DataTransferred }}` in `{{ .Duration }}` at an average speed of `{{ .AverageTransferSpeed }}`
 
-Success: `{{ .Success }}`
-
-Duration: `{{ .Duration }}` seconds
-
-Speed: `{{ .Speed }}`
-
-Bytes: `{{ .Bytes }}`
-
-Checks: `{{ .Checks }}`
-
-Deletes: `{{ .Deletes }}`
-
-Transfers: `{{ .Transfers }}`
-
-Errors: `{{ .Errors }}`
-
-Renames: `{{ .Renames }}`
+- Checks: `{{ .Checks }}`
+- Deletes: `{{ .Deletes }}`
+- Transfers: `{{ .Transfers }}`
+- Errors: `{{ .Errors }}`
+- Renames: `{{ .Renames }}`

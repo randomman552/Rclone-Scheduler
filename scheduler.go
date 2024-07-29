@@ -149,17 +149,24 @@ func CheckBackupStatusTask(c *cli.Context, storageEngine MemoryStorageEngine) {
 				roundDuration := time.Duration(time.Second)
 				jobDuration := time.Duration(jobStatus.Duration * float64(time.Second)).Round(roundDuration)
 
+				// Prevent divide by 0 error
+				averageTransferSpeed := jobStats.Speed
+				if uint(jobStats.TransferTime) != 0 {
+					averageTransferSpeed = float64(jobStats.Bytes / uint(jobStats.TransferTime))
+				}
+
 				context := NotifyBackupFinishedContext{
-					JobId:     jobId,
-					Success:   jobStatus.Success,
-					Duration:  jobDuration.String(),
-					Bytes:     humanize.IBytes(uint64(jobStats.Bytes)),
-					Speed:     humanize.IBytes(uint64(math.Round(jobStats.Speed))) + "/S",
-					Checks:    jobStats.Checks,
-					Deletes:   jobStats.Deletes,
-					Transfers: jobStats.Transfers,
-					Errors:    jobStats.Errors,
-					Renames:   jobStats.Renames,
+					JobId:                jobId,
+					Success:              jobStatus.Success,
+					Duration:             jobDuration.String(),
+					DataTransferred:      humanize.IBytes(uint64(jobStats.Bytes)),
+					AverageSpeed:         humanize.IBytes(uint64(math.Round(jobStats.Speed))) + "/S",
+					AverageTransferSpeed: humanize.IBytes(uint64(averageTransferSpeed)) + "/S",
+					Checks:               humanize.Comma(int64(jobStats.Checks)),
+					Deletes:              humanize.Comma(int64(jobStats.Deletes)),
+					Transfers:            humanize.Comma(int64(jobStats.Transfers)),
+					Errors:               humanize.Comma(int64(jobStats.Errors)),
+					Renames:              humanize.Comma(int64(jobStats.Renames)),
 				}
 
 				gotify.NotifyBackupFinished(context)
