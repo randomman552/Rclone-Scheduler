@@ -70,12 +70,17 @@ func createScheduler(c *cli.Context) (gocron.Scheduler, error) {
 // Task run on startup
 func AppliationReadyTask(c *cli.Context, backupJob gocron.Job) {
 	backupSchedule := getBackupSchedule(c)
+	backupNow := c.Bool("backup.now")
 	nextRun, _ := backupJob.NextRun()
 	nextRunStr := nextRun.Format(time.RFC822)
 	timeBeforeNextJobStr := humanize.Time(nextRun)
 
 	log.Printf("Backing up with schedule '%s'", backupSchedule)
 	log.Printf("First backup will start %s (%s)", timeBeforeNextJobStr, nextRunStr)
+
+	if backupNow {
+		log.Printf("Starting backup immedietly")
+	}
 
 	// Send gotify notification
 	gotify := NewGotifyNotifier(c)
@@ -90,7 +95,7 @@ func AppliationReadyTask(c *cli.Context, backupJob gocron.Job) {
 	}
 
 	// Start the backup job straight away if requested
-	if c.Bool("backup.now") {
+	if backupNow {
 		backupJob.RunNow()
 	}
 }
