@@ -88,6 +88,11 @@ func AppliationReadyTask(c *cli.Context, backupJob gocron.Job) {
 
 		gotify.NotifyReady(notifyContext)
 	}
+
+	// Start the backup job straight away if requested
+	if c.Bool("backup.now") {
+		backupJob.RunNow()
+	}
 }
 
 // The function used to start a backup job

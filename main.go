@@ -49,6 +49,13 @@ func main() {
 			},
 			Value: "0 0 * * 0",
 		},
+		&cli.BoolFlag{
+			Name: "backup.now",
+			EnvVars: []string{
+				"BACKUP_NOW",
+			},
+			Value: false,
+		},
 		&cli.StringFlag{
 			Name: "backup.source",
 			EnvVars: []string{
