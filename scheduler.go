@@ -78,10 +78,6 @@ func AppliationReadyTask(c *cli.Context, backupJob gocron.Job) {
 	log.Printf("Backing up with schedule '%s'", backupSchedule)
 	log.Printf("First backup will start %s (%s)", timeBeforeNextJobStr, nextRunStr)
 
-	if backupNow {
-		log.Printf("Starting backup immedietly")
-	}
-
 	// Send gotify notification
 	gotify := NewGotifyNotifier(c)
 	if gotify.IsEnabled() {
@@ -96,6 +92,8 @@ func AppliationReadyTask(c *cli.Context, backupJob gocron.Job) {
 
 	// Start the backup job straight away if requested
 	if backupNow {
+		log.Printf("Starting backup now!")
+		time.Sleep(time.Duration(10 * time.Second))
 		backupJob.RunNow()
 	}
 }
