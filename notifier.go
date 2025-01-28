@@ -13,6 +13,7 @@ type NotifyReadyContext struct {
 	Schedule         string
 	NextBackupTime   string
 	DurationToBackup string
+	BackupNow        bool
 }
 
 // Notification context for backup started notifications

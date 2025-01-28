@@ -1,3 +1,7 @@
 Backing up with schedule `{{ .Schedule }}`
 
 First backup will start {{ .DurationToBackup }} ({{ .NextBackupTime }})
+
+{{- if .BackupNow -}}
+    Backup now flag is set, backup will start immediately
+{{- end -}}
