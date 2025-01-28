@@ -92,6 +92,7 @@ func AppliationReadyTask(c *cli.Context, backupJob gocron.Job) {
 			Schedule:         backupSchedule,
 			NextBackupTime:   nextRunStr,
 			DurationToBackup: timeBeforeNextJobStr,
+			BackupNow:        backupNow,
 		}
 
 		gotify.NotifyReady(notifyContext)
